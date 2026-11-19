@@ -168,8 +168,6 @@ def give_poss_hmg(N, L, v0, Tf, Theta, x0, y0, num=1, N_bg=1):
     for frame in range(1, Tf):
         flocks_x = (flocks_x + v0 * cp.cos(Theta))
         flocks_y = (flocks_y + v0 * cp.sin(Theta))
-        # flocks_x = (flocks_x + v0 * cp.cos(Theta)) % L
-        # flocks_y = (flocks_y + v0 * cp.sin(Theta)) % L
         poss[frame] = step_fwd_hmg(
             poss[frame - 1],
             v0,

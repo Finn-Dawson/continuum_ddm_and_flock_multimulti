@@ -17,7 +17,8 @@ T_ss = 1000
 
 # ddm parameters
 Dt_set = [50, 100, 125, 250, 500]  # selection of episode lengths to be used
-ws = [2,3,4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60, 120]
+ws = [2,3,4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60, 120] # selection of tiles sizes in multiples of L/ws[-1]
+# e.g. if ws = [2,3,4,12] and L = 1200, tiles have widths 200, 300, 400, and 1200 px.
 tauMax = 41  # maximum tau Fourier time
 taus = np.arange(1, tauMax)
 K = 30  # number of Fourier directions to measure at
@@ -25,7 +26,7 @@ anglesPerDirection = (
     1  # K * anglesPerDirection angles over the interval 0 to pi are measured at,
 )
 # then sorted into bins containing anglesPerDirection angles each, and an average is taken of values in each bin
-prominence_threshold = 0.1 # required prominence for sec function fitting - can be changed!
+prominence_threshold = 0.1 # required prominence for sec function fitting. 
 
 
 # mm-DDM analysis Xs = unwrapped pos
@@ -155,6 +156,7 @@ def recip_cos(x, a, b, c, maxim=41):
         a / np.abs(np.cos(c * (x - b))) < maxim, a / np.abs(np.cos(c * (x - b))), maxim
     )
 
+# gives the anisotropies , 
 def give_anisos(Dt_set, ws, fits, num_a_steps = 100, num_b_steps = 100, tauMax = 41):
     qualities = []
     a_cutoff = tauMax - 1
@@ -177,39 +179,25 @@ def give_anisos(Dt_set, ws, fits, num_a_steps = 100, num_b_steps = 100, tauMax =
                 #y_fits[i,j,k] is the fit value for b option i theta option j for a-optionk
                 #P broadcast shape(Nx, Ny, 1,           num_fourierangles, 1           )
                 #y broadcast shape(1 , 1 , num_bangles, num_fourierangles, num_aoptions)
-                # discard data points with no maxima found 
                 errors = cp.abs(P[:,:,None, :, None]-y_fits[None,None,:,:,:])
                 all_residuals = cp.sum(errors, axis = 3) #error for (Nx, Ny, b_option, a_option)
-                # best_residual_a_index = cp.argmin(all_residuals, axis=-1) # findthe best a for x,y,b
                 best_residuals = cp.min(all_residuals, axis=-1) #best for (Nx, Ny, b_option)
-                # best_a = a_candidates[best_residual_a_index] #(Nx,Ny,b_option)
-                # best_b_idx = cp.argmin(best_residuals, axis=-1) #(Nx,Ny)
-                # best_a_overall = cp.take_along_axis(best_a, best_b_idx[..., None], axis=-1)[..., 0]
-                # above does:
-                # for x in range(Nx):
-                #     for y in range(Ny):
-                #         best_a_overall[x,y] = best_a[x,y,best_b_idx[x,y]]
 
                 # compare with iso fit
                 med = cp.median(P, axis=-1)
                 iso_residual = cp.sum(cp.abs(P - med[...,None]), axis=-1)
             
-                # denom = cp.sum(best_residuals, axis=-1) #sum for all b options (Nx,Ny)
                 min_res = cp.min(best_residuals, axis=-1) #min res for each cell (Nx,Ny)
                 aniso_residual = min_res
                 quality = (iso_residual - aniso_residual) / (iso_residual + aniso_residual)
-                # quality = cp.where(denom==0,0,1 - (K*min_res)/denom) #quality for (Nx,Ny)
-                # quality = cp.where(best_a_overall > a_cutoff, 0, quality)
                 # nan out empty pixels or pixels where no peak is found.
                 mask = cp.all(P==0, axis=-1)
                 quality = cp.where(mask, cp.nan, quality)
                 qualities[Dt_idx][episode_idx].append(cp.asnumpy(quality))
-
                 
     return qualities
                 
-# time averaged desnity = counts / area calculation
-
+# time averaged desnity = counts / area 
 def box_densities(Dt_set, ws, timeseries, L):
     Dt_set = cp.asarray(Dt_set)
     ws = cp.asarray(ws)
