@@ -46,7 +46,7 @@ class aniso_distribution:
         B = 1 - self.fourth_moment() / (3 * (self.second_moment())**2)
         return B
     def pearson_skew(self):
-        S = 3 * (self.mean() - self.median()) / min(self.std(), 1e-6)
+        S = 3 * (self.mean() - self.median()) / max(self.std(), 1e-6)
         return S
 
 
