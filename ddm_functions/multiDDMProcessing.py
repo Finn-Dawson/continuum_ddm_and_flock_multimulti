@@ -21,8 +21,8 @@ def modSquare(differences):
 # Other helper functions -----------------------------------------------------------------
 
 # Works out what box every particle is in for every frame.
-# Use wrapped positions in [0,L]x[0,L] domain.
-# positions shape (numframes, numparticles, 2), frameSize=L, gridsize=num boxes on edge
+# box numbers outside the range are later wrapped into the periodic domain with cp.add.at in doBaseTransform
+# positions shape (numframes, numparticles, 2), frameSize=L, gridsize=num_boxes_on_edge
 def assignBoxNumbers(positions, frameSize, gridSize):
     boxSize = frameSize / gridSize
     boxCoordinates = positions / boxSize
@@ -101,6 +101,7 @@ def doBaseTransform(particlePositions, outputPositions, gridSize, frameSize):
         box_y = boxNumbers[frameNumber, :, 1]
 
         # Perform atomic add on real and imaginary parts separately.
+        # cupy add at wraps out of range box coordinates (unlike numpy)
         cupy.add.at(
             boxTransforms_real[frameNumber],
             (box_x, box_y),
