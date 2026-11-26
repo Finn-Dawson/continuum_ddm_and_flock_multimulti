@@ -10,8 +10,8 @@ DDM functions for processing simulated particle data. Example useage:
 N = 2000
 L = 1200
 speed = 1.5
-persistence_length = 10
-noise_strength = np.sqrt(2 * speed / persistence_length) # for normal noise.
+persistenceLength = 10
+noise_strength = np.sqrt(2 * speed / persistenceLength) # for normal noise.
 Tf = 3000
 T_ss = 1000
 
