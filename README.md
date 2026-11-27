@@ -14,14 +14,15 @@ The code is organised into three main parts:
 ## Installation
 
 Clone the repository:
-
+```bash
 git clone https://github.com/Finn-Dawson/continuum_ddm_and_flock_multimulti.git
 cd continuum_ddm_and_flock_multimulti
-
+```
 Install the required Python packages:
-
+```bash
 pip install -r requirements.txt
-
+```
 To launch the interactive heatmap explorer:
-
+```bash
 cd heatmaps_N_r_P_v; python interactive.py
+```
