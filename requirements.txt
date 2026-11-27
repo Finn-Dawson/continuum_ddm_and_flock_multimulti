@@ -1,0 +1,7 @@
+numpy
+cupy-cuda12x
+scipy
+torch
+matplotlib
+scikit-learn
+ipympl
