@@ -11,4 +11,17 @@ The code is organised into three main parts:
 
 `heatmaps_N_r_P_v` contains a selection of example flock heat heatmaps, which can be explored via the `interactive.py` widget.
 
+## Installation
 
+Clone the repository:
+
+git clone https://github.com/Finn-Dawson/continuum_ddm_and_flock_multimulti.git
+cd continuum_ddm_and_flock_multimulti
+
+Install the required Python packages:
+
+pip install -r requirements.txt
+
+To launch the interactive heatmap explorer:
+
+cd heatmaps_N_r_P_v; python interactive.py
