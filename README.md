@@ -123,7 +123,7 @@ if heatmap_figure:
 
 Inflection sigmoids method:
 ```python
-import mm_analysis_functions.heatmap_funcs
+from mm_analysis_functions import heatmap_funcs
 
 heat_choice = "mean"
 Dt_idx_slice = 0 #episode index to slice across
