@@ -11,6 +11,8 @@ The code is organised into three main parts:
 
 `heatmaps_N_r_P_v` contains a selection of example flock heat heatmaps, which can be explored via the `interactive.py` widget.
 
+`example_flock_videos` contains a selection of example Vicsek flock videos, where particles are coloured by direction.
+
 Parts 1 and 2 make use of the CuPy library and require a CUDA-enabled GPU with a compatible NVIDIA CUDA environment. Part 3 requires PyTorch, which can be run on either CPU or GPU.
 
 ## Installation
