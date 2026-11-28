@@ -11,6 +11,8 @@ The code is organised into three main parts:
 
 `heatmaps_N_r_P_v` contains a selection of example flock heat heatmaps, which can be explored via the `interactive.py` widget.
 
+Parts 1) and 2) make use of the CuPy library and require a CUDA-enabled GPU with a compatible NVIDIA CUDA environment. Part 3) requires PyTorch, which can be run on either CPU or GPU.
+
 ## Installation
 
 Clone the repository:
@@ -34,6 +36,7 @@ cd heatmaps_N_r_P_v; python interactive.py
 ```python
 import ddm_functions.ddm_functions_f as ddm
 import simulation_functions.vicsek_sim as sim
+import numpy as np
 
 # simulation parameters
 numberOfParticles = 2000
@@ -57,7 +60,8 @@ anglesPerDirection = 1  # numer of angles used for each Fourier direction
 prominence_threshold = 0.1 # required prominence for finding the first peak of the image structure function
 
 # simulation run
-Xs = sim.give_positions_unwrapped(speed, interactionRadius, noise_strength, numberOfParticles, L, numberOfFrames)
+Xs_full = sim.give_positions_unwrapped(speed, interactionRadius, noise_strength, numberOfParticles, L, numberOfFrames)
+Xs = Xs_full[T_ss:]
 
 # mm-DDM analysis Xs = unwrapped pos
 qq_subs = ddm.give_outputpositions(0.4, K, anglesPerDirection)
@@ -85,7 +89,7 @@ Dfiles = [] #list of density path names
 
 #load in anisos with a choice of an occupancy cutoff (tiles with an average occupancy < occupancy_cutoff are ignored)
 anisos = load_anisos(Afiles, Dfiles, Dt_set, ws, L, occupancy_cutoff = 0)
-all_heatmaps = make_heatmaps(anisos, Dt_set, ws) #all_heatmaps[metric_choice e.g. "mean"][dt_idx][ws_idx] gives the flock heat H(w, T_eps)
+all_heatmaps = make_heatmaps(anisos, Dt_set, ws) #all_heatmaps[heat_choice e.g. "mean"][dt_idx][ws_idx] gives the flock heat H(w, T_eps)
 
 # heatmap plot if desired
 heat_choice = "mean"
@@ -111,7 +115,7 @@ if heatmap_figure:
     plt.xlabel("w / px")
     plt.ylabel("T_eps / s")
     plt.colorbar()
-    put.show()
+    plt.show()
 ```
 ### Recover `interactionRadius`
 
@@ -119,7 +123,7 @@ Inflection sigmoids method:
 ```python
 import mm_analysis_functions.heatmap_funcs
 
-metric_choice = "mean"
+heat_choice = "mean"
 Dt_idx_slice = 0 #episode index to slice across
 slice = all_heatmaps[heat_choice][Dt_idx_slice]
 slice_peak, slice_inflect, popt = heatmap_funcs.find_peak_and_inflect(slice, tile_sizes)
